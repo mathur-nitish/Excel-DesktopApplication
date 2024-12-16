@@ -18,6 +18,7 @@ namespace ExcelClone
         static public DataGridViewCell tempCell;
         static public HashSet<DataGridViewCell> FocusedCellSet = new HashSet<DataGridViewCell>();
         private FontPanel tempPanelRef;
+        private bool formula = false;
         private enum Tabs { Basic, Insert, Formulas, View };
         private Tabs activeTab = Tabs.Basic;
         public Form1()
@@ -25,7 +26,7 @@ namespace ExcelClone
             InitializeComponent();
             sheet1.ContextMenuStrip = baseContextstrip;
             sheet1.RowCount = 50;
-            sheet1.ColumnCount = 50;
+            sheet1.ColumnCount = 26;
             for (int i = 0; i < sheet1.ColumnCount; i++)
             {
                 sheet1.Columns[i].Name = ((char)('A' + i)).ToString(); // A, B, C...
@@ -52,6 +53,8 @@ namespace ExcelClone
 
             //this.FormBorderStyle = FormBorderStyle.None;
             //this.Padding = new Padding(5);
+
+
 
         }
         private void Sheet1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
@@ -96,6 +99,7 @@ namespace ExcelClone
             //{
             //    tempPanelRef.disablePanelControls();
             //}
+
         }
 
         private void sheet1_SelectionChanged(object sender, EventArgs e)
@@ -240,7 +244,7 @@ namespace ExcelClone
 
             //Rectangle cellRectangle = sheet1.GetCellDisplayRectangle(columnIdx, rowIdx, false);
             //Point buttonPosition = sheet1.PointToScreen(new Point(cellRectangle.X,cellRectangle.Y));
-            
+
 
 
 
@@ -251,7 +255,116 @@ namespace ExcelClone
 
         private void sheet1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            
+
+        }
+
+        private bool CheckValid(string s)
+        {
+            // checking for SUM
+            if (s[0]!='=')
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private string getValidStr(string s)
+        {
+            string temp = "";
+            int iter = 0;
+            while (iter != '(')
+            {
+                iter++;
+            }
+            iter++;
+            while(iter!=')')
+            {
+                temp += s[iter];
+            }
+            return temp;
+        }
+
+        private void sheet1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            string s = FocusedCellSet.First().Value.ToString();
+            formula = CheckValid(s);
+            s = s.ToLower();
+            if (formula)
+            {
+                s = getValidStr(s);
+                // itz gonna work
+                int stIdx = s[0] - 97;
+                int enIdx = -1;
+                for (int i = s.Length - 1; i != ':' && i >= 0; i--)
+                {
+                    if (s[i] >= '0' && s[i] <= '9')
+                    {
+                        // pass
+                    }
+                    else
+                    {
+                        enIdx = s[i] - 97;
+                        break;
+                    }
+                }
+
+                // is my stIdx==enIdx? -> Column aggregation
+                // else -> Row aggregation
+
+                if (stIdx == enIdx)
+                {
+                    // A5:A6
+                    string tempNum = "";
+                    int iter = 1;
+                    while (iter < s.Length && s[iter] != ':')
+                    {
+                        tempNum += s[iter];
+                        iter++;
+                    }
+                    int num1 = int.Parse(tempNum);
+                    iter += 2;
+                    tempNum = "";
+                    while (iter < s.Length)
+                    {
+                        tempNum += s[iter];
+                        iter++;
+                    }
+                    int num2 = int.Parse(tempNum);
+
+                    MessageBox.Show($"{stIdx},{num2}");
+                    return;
+                    // aggregating vertically
+                    int sum = 0;        // taking example as of SUM
+                    for (int i = num1; i <= num2; i++)
+                    {
+                        sum += int.Parse(sheet1.Rows[i].Cells[stIdx].Value.ToString());
+                    }
+                    FocusedCellSet.First().Value = sum;
+
+                    MessageBox.Show("Ended");
+                }
+                else
+                {
+                    string tempNum = "";
+                    int iter = 1;
+                    while (iter < s.Length && s[iter] != ':')
+                    {
+                        tempNum += s[iter];
+                        iter++;
+                    }
+                    int num1 = int.Parse(tempNum);
+                    MessageBox.Show($"{stIdx},{num1}");
+                    return;
+                    // aggregating horizontally
+                    int sum = 0;        // taking example as of SUM
+                    for (int i = stIdx; i <= enIdx; i++)
+                    {
+                        sum += int.Parse(sheet1.Rows[num1].Cells[i].Value.ToString());
+                    }
+                    FocusedCellSet.First().Value = sum;
+
+                }
+            }
         }
     }
 }

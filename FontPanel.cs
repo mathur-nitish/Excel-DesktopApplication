@@ -236,5 +236,16 @@ namespace ExcelClone
                 }
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // display the current cell selected
+            int col = Form1.FocusedCellSet.First().ColumnIndex;
+            int row = Form1.FocusedCellSet.First().RowIndex;
+
+            
+            //essageBox.Show($"Column: {col}, Row: {row}");
+
+        }
     }
 }

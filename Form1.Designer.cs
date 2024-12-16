@@ -153,6 +153,7 @@
             this.sheet1.Size = new System.Drawing.Size(1249, 490);
             this.sheet1.TabIndex = 0;
             this.sheet1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            this.sheet1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.sheet1_CellEndEdit);
             this.sheet1.CellLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.sheet1_CellLeave);
             this.sheet1.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.sheet1_CellMouseDown);
             this.sheet1.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.sheet1_CellMouseUp);
@@ -200,7 +201,7 @@
             this.duplicateOption});
             this.baseContextstrip.Name = "baseContextstrip";
             this.baseContextstrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.baseContextstrip.Size = new System.Drawing.Size(211, 80);
+            this.baseContextstrip.Size = new System.Drawing.Size(143, 52);
             // 
             // autoFilloption
             // 
