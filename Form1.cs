@@ -272,14 +272,15 @@ namespace ExcelClone
         {
             string temp = "";
             int iter = 0;
-            while (iter != '(')
+            while (iter<s.Length && s[iter] != '(')
             {
                 iter++;
             }
             iter++;
-            while(iter!=')')
+            while(iter<s.Length && s[iter]!=')')
             {
                 temp += s[iter];
+                iter++;
             }
             return temp;
         }
@@ -292,6 +293,8 @@ namespace ExcelClone
             if (formula)
             {
                 s = getValidStr(s);
+                MessageBox.Show(s);
+
                 // itz gonna work
                 int stIdx = s[0] - 97;
                 int enIdx = -1;
@@ -332,10 +335,10 @@ namespace ExcelClone
                     int num2 = int.Parse(tempNum);
 
                     MessageBox.Show($"{stIdx},{num2}");
-                    return;
+                    
                     // aggregating vertically
                     int sum = 0;        // taking example as of SUM
-                    for (int i = num1; i <= num2; i++)
+                    for (int i = num1; i < num2; i++)
                     {
                         sum += int.Parse(sheet1.Rows[i].Cells[stIdx].Value.ToString());
                     }
@@ -354,7 +357,7 @@ namespace ExcelClone
                     }
                     int num1 = int.Parse(tempNum);
                     MessageBox.Show($"{stIdx},{num1}");
-                    return;
+                    
                     // aggregating horizontally
                     int sum = 0;        // taking example as of SUM
                     for (int i = stIdx; i <= enIdx; i++)
